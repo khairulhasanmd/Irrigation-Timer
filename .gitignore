@@ -1,0 +1,9 @@
+*.eep
+*.hex
+*.elf
+*.lss
+*.lst
+*.map
+*.sym
+*.sublime-project
+*.sublime-workspace

@@ -87,7 +87,7 @@ int main (void)
     }else if ((!(PIND & (1 << GEAR_SHIFT_DOWN))) && dwnState == 0){  //if shift down detected
       gearCount --;
       if(gearCount < 0){
-        gearCount = 0;
+        gearCount = 15;
       }
       PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
       dwnState = 1;
