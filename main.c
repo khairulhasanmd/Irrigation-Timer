@@ -54,7 +54,7 @@ int main (void)
 
   //READ FROM EEPROM
   valueRead = eeprom_read_byte((uint8_t*)EEPROM_STORAGE_ADDRESS);//read eeprom
-  if (valueRead == 0xFFFF)//initial value.. omit it 
+  if (valueRead > 0x0F)//initial value.. omit it 
   {
     gearCount = 0;
   }else{//has some value and its larger 
@@ -86,7 +86,7 @@ int main (void)
       update_display();
     }else if ((!(PIND & (1 << GEAR_SHIFT_DOWN))) && dwnState == 0){  //if shift down detected
       gearCount --;
-      if(gearCount < 0){
+      if(gearCount < 0 || gearCount > 15){
         gearCount = 15;
       }
       PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
