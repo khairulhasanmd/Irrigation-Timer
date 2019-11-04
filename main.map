@@ -137,7 +137,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x194
+.text           0x00000000      0x1e2
  *(.vectors)
  .vectors       0x00000000       0x26 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
                 0x00000000                __vector_default
@@ -214,68 +214,69 @@ END GROUP
                 0x0000005c                __vector_10
                 0x0000005c                __vector_16
                 0x0000005c                __vector_18
- .text          0x0000005e       0x1e main.o
+ .text          0x0000005e       0x38 main.o
                 0x0000005e                __vector_6
- .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
- .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
- .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
- .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
- .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
-                0x0000007c                . = ALIGN (0x2)
+                0x0000007c                update_display
+ .text          0x00000096        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+ .text          0x00000096        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+ .text          0x00000096        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+ .text          0x00000096        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
+ .text          0x00000096        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
+                0x00000096                . = ALIGN (0x2)
  *(.text.*)
- .text.startup  0x0000007c       0xea main.o
-                0x0000007c                main
+ .text.startup  0x00000096      0x11e main.o
+                0x00000096                main
  .text.libgcc.mul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.div
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
- .text.libgcc   0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+ .text.libgcc   0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.prologue
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.builtins
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.fmul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.fixed
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  .text.libgcc.mul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.div
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
- .text.libgcc   0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+ .text.libgcc   0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.prologue
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.builtins
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fmul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fixed
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.mul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.div
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
- .text.libgcc   0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.prologue
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.builtins
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fmul
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
-                0x00000166        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+                0x000001b4        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
  .text.avr-libc
-                0x00000166       0x10 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
-                0x00000166                eeprom_read_byte
+                0x000001b4       0x10 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
+                0x000001b4                eeprom_read_byte
  .text.avr-libc
-                0x00000176       0x1a c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
-                0x00000176                eeprom_write_byte
-                0x00000178                eeprom_write_r18
-                0x00000190                . = ALIGN (0x2)
+                0x000001c4       0x1a c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
+                0x000001c4                eeprom_write_byte
+                0x000001c6                eeprom_write_r18
+                0x000001de                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000190        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
-                0x00000190                _exit
-                0x00000190                exit
+ .fini9         0x000001de        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+                0x000001de                _exit
+                0x000001de                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -294,11 +295,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000190        0x4 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+ .fini0         0x000001de        0x4 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000194                _etext = .
+                0x000001e2                _etext = .
 
-.data           0x00800060       0x10 load address 0x00000194
+.data           0x00800060       0x10 load address 0x000001e2
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
@@ -318,32 +319,34 @@ END GROUP
                 0x00800070                _edata = .
                 0x00800070                PROVIDE (__data_end, .)
 
-.bss            0x00800070        0x4
+.bss            0x00800070        0x6
                 0x00800070                PROVIDE (__bss_start, .)
  *(.bss)
  .bss           0x00800070        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
- .bss           0x00800070        0x3 main.o
+ .bss           0x00800070        0x5 main.o
                 0x00800070                buttonPressed
                 0x00800071                valueRead
-                0x00800072                gearState
- .bss           0x00800073        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
- .bss           0x00800073        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
- .bss           0x00800073        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
- .bss           0x00800073        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
- .bss           0x00800073        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
+                0x00800072                gearCount
+                0x00800073                dwnState
+                0x00800074                upState
+ .bss           0x00800075        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
+ .bss           0x00800075        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_copy_data.o)
+ .bss           0x00800075        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_clear_bss.o)
+ .bss           0x00800075        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
+ .bss           0x00800075        0x0 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
  *(.bss*)
  *(COMMON)
- COMMON         0x00800073        0x1 main.o
-                0x00800073                secondFlag
-                0x00800074                PROVIDE (__bss_end, .)
-                0x00000194                __data_load_start = LOADADDR (.data)
-                0x000001a4                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800075        0x1 main.o
+                0x00800075                secondFlag
+                0x00800076                PROVIDE (__bss_end, .)
+                0x000001e2                __data_load_start = LOADADDR (.data)
+                0x000001f2                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800074        0x0
+.noinit         0x00800076        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800074                _end = .
+                0x00800076                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -416,30 +419,30 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x6e8
+.debug_info     0x00000000      0x733
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x48c c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
- .debug_info    0x0000048c      0x25c main.o
+ .debug_info    0x0000048c      0x2a7 main.o
 
-.debug_abbrev   0x00000000      0x586
+.debug_abbrev   0x00000000      0x5a7
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x44e c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
- .debug_abbrev  0x0000044e      0x138 main.o
+ .debug_abbrev  0x0000044e      0x159 main.o
 
-.debug_line     0x00000000      0x1b9
+.debug_line     0x00000000      0x23a
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0x1a c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
- .debug_line    0x0000001a      0x19f main.o
+ .debug_line    0x0000001a      0x220 main.o
 
-.debug_frame    0x00000000       0x48
+.debug_frame    0x00000000       0x58
  *(.debug_frame)
- .debug_frame   0x00000000       0x48 main.o
+ .debug_frame   0x00000000       0x58 main.o
 
-.debug_str      0x00000000      0x331
+.debug_str      0x00000000      0x351
  *(.debug_str)
  .debug_str     0x00000000      0x17a c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
- .debug_str     0x0000017a      0x1b7 main.o
-                                0x1eb (size before relaxing)
+ .debug_str     0x0000017a      0x1d7 main.o
+                                0x20b (size before relaxing)
 
 .debug_loc      0x00000000       0xcc
  *(.debug_loc)
@@ -512,6 +515,7 @@ __vector_default                                  c:/winavr/bin/../lib/gcc/avr/5
 __vectors                                         c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
 _exit                                             c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
 buttonPressed                                     main.o
+dwnState                                          main.o
 eeprom_read_byte                                  c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eerd_byte.o)
                                                   main.o
 eeprom_write_byte                                 c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
@@ -519,9 +523,11 @@ eeprom_write_byte                                 c:/winavr/bin/../lib/gcc/avr/5
 eeprom_write_r18                                  c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4\libatmega8.a(eewr_byte.o)
 exit                                              c:/winavr/bin/../lib/gcc/avr/5.4.0/avr4\libgcc.a(_exit.o)
                                                   c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
-gearState                                         main.o
+gearCount                                         main.o
 main                                              main.o
                                                   c:/winavr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr4/crtatmega8.o
 secondFlag                                        main.o
 states_of_segment                                 main.o
+upState                                           main.o
+update_display                                    main.o
 valueRead                                         main.o

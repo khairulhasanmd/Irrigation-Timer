@@ -3,31 +3,31 @@ main.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000194  00000000  00000000  00000094  2**1
+  0 .text         000001e2  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000010  00800060  00000194  00000228  2**0
+  1 .data         00000010  00800060  000001e2  00000276  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000004  00800070  00800070  00000238  2**0
+  2 .bss          00000006  00800070  00800070  00000286  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000238  2**0
+  3 .comment      00000030  00000000  00000000  00000286  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000268  2**2
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000002b8  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000028  00000000  00000000  000002a4  2**0
+  5 .debug_aranges 00000028  00000000  00000000  000002f4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000006e8  00000000  00000000  000002cc  2**0
+  6 .debug_info   00000733  00000000  00000000  0000031c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000586  00000000  00000000  000009b4  2**0
+  7 .debug_abbrev 000005a7  00000000  00000000  00000a4f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000001b9  00000000  00000000  00000f3a  2**0
+  8 .debug_line   0000023a  00000000  00000000  00000ff6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000048  00000000  00000000  000010f4  2**2
+  9 .debug_frame  00000058  00000000  00000000  00001230  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000331  00000000  00000000  0000113c  2**0
+ 10 .debug_str    00000351  00000000  00000000  00001288  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000000cc  00000000  00000000  0000146d  2**0
+ 11 .debug_loc    000000cc  00000000  00000000  000015d9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000018  00000000  00000000  00001539  2**0
+ 12 .debug_ranges 00000018  00000000  00000000  000016a5  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -65,7 +65,7 @@ Disassembly of section .text:
   32:	10 e0       	ldi	r17, 0x00	; 0
   34:	a0 e6       	ldi	r26, 0x60	; 96
   36:	b0 e0       	ldi	r27, 0x00	; 0
-  38:	e4 e9       	ldi	r30, 0x94	; 148
+  38:	e2 ee       	ldi	r30, 0xE2	; 226
   3a:	f1 e0       	ldi	r31, 0x01	; 1
   3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
   3e:	05 90       	lpm	r0, Z+
@@ -84,11 +84,11 @@ Disassembly of section .text:
   50:	1d 92       	st	X+, r1
 
 00000052 <.do_clear_bss_start>:
-  52:	a4 37       	cpi	r26, 0x74	; 116
+  52:	a6 37       	cpi	r26, 0x76	; 118
   54:	b2 07       	cpc	r27, r18
   56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
-  58:	11 d0       	rcall	.+34     	; 0x7c <main>
-  5a:	9a c0       	rjmp	.+308    	; 0x190 <_exit>
+  58:	1e d0       	rcall	.+60     	; 0x96 <main>
+  5a:	c1 c0       	rjmp	.+386    	; 0x1de <_exit>
 
 0000005c <__bad_interrupt>:
   5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
@@ -108,7 +108,7 @@ ISR(TIMER1_COMPA_vect)
   68:	8f 93       	push	r24
   secondFlag = 1;
   6a:	81 e0       	ldi	r24, 0x01	; 1
-  6c:	80 93 73 00 	sts	0x0073, r24	; 0x800073 <secondFlag>
+  6c:	80 93 75 00 	sts	0x0075, r24	; 0x800075 <secondFlag>
 }
   70:	8f 91       	pop	r24
   72:	0f 90       	pop	r0
@@ -117,214 +117,274 @@ ISR(TIMER1_COMPA_vect)
   78:	1f 90       	pop	r1
   7a:	18 95       	reti
 
-0000007c <main>:
+0000007c <update_display>:
+
+void update_display()
+{
+  //display the values
+  PORTB &= 0b10000000;
+  7c:	88 b3       	in	r24, 0x18	; 24
+  7e:	80 78       	andi	r24, 0x80	; 128
+  80:	88 bb       	out	0x18, r24	; 24
+  PORTB |= states_of_segment[gearCount];
+  82:	98 b3       	in	r25, 0x18	; 24
+  84:	e0 91 72 00 	lds	r30, 0x0072	; 0x800072 <gearCount>
+  88:	f0 e0       	ldi	r31, 0x00	; 0
+  8a:	e0 5a       	subi	r30, 0xA0	; 160
+  8c:	ff 4f       	sbci	r31, 0xFF	; 255
+  8e:	80 81       	ld	r24, Z
+  90:	89 2b       	or	r24, r25
+  92:	88 bb       	out	0x18, r24	; 24
+  94:	08 95       	ret
+
+00000096 <main>:
+}
 
 int main (void)
 {
   //initialize the I/O Ports
   DDRC |= (1 << PC5)|(1 << PC4)|(1 << PC3)|(1 << PC2); //led in pc5,4,3,2,pins
-  7c:	84 b3       	in	r24, 0x14	; 20
-  7e:	8c 63       	ori	r24, 0x3C	; 60
-  80:	84 bb       	out	0x14, r24	; 20
+  96:	84 b3       	in	r24, 0x14	; 20
+  98:	8c 63       	ori	r24, 0x3C	; 60
+  9a:	84 bb       	out	0x14, r24	; 20
   DDRB |= (1 << PB0)|(1 << PB1)|(1 << PB2)|(1 << PB3)|(1 << PB4)|(1 << PB5)|(1 << PB6)|(1 << SEGMENT_DOT); //seven segment gfedcba.
-  82:	87 b3       	in	r24, 0x17	; 23
-  84:	8f ef       	ldi	r24, 0xFF	; 255
-  86:	87 bb       	out	0x17, r24	; 23
+  9c:	87 b3       	in	r24, 0x17	; 23
+  9e:	8f ef       	ldi	r24, 0xFF	; 255
+  a0:	87 bb       	out	0x17, r24	; 23
   DDRD &= ~((1 << GEAR_SHIFT_UP)|(1 << GEAR_SHIFT_DOWN)|(1 << RESET_ALL)|(1 << POWER_OFF_DETECT));    // switch on pin (GEAR_SHIFT_UP)
-  88:	81 b3       	in	r24, 0x11	; 17
-  8a:	88 7e       	andi	r24, 0xE8	; 232
-  8c:	81 bb       	out	0x11, r24	; 17
+  a2:	81 b3       	in	r24, 0x11	; 17
+  a4:	88 7e       	andi	r24, 0xE8	; 232
+  a6:	81 bb       	out	0x11, r24	; 17
   PORTD |= (1 << GEAR_SHIFT_UP)|(1 << GEAR_SHIFT_DOWN)|(1 << RESET_ALL)|(1 << POWER_OFF_DETECT);    // enable pull-up resistor
-  8e:	82 b3       	in	r24, 0x12	; 18
-  90:	87 61       	ori	r24, 0x17	; 23
-  92:	82 bb       	out	0x12, r24	; 18
+  a8:	82 b3       	in	r24, 0x12	; 18
+  aa:	87 61       	ori	r24, 0x17	; 23
+  ac:	82 bb       	out	0x12, r24	; 18
 
   TCCR1B |= (1 << WGM12);           // Configure timer 1 for CTC mode
-  94:	8e b5       	in	r24, 0x2e	; 46
-  96:	88 60       	ori	r24, 0x08	; 8
-  98:	8e bd       	out	0x2e, r24	; 46
+  ae:	8e b5       	in	r24, 0x2e	; 46
+  b0:	88 60       	ori	r24, 0x08	; 8
+  b2:	8e bd       	out	0x2e, r24	; 46
   TIMSK |= (1 << OCIE1A);           // Enable CTC interrupt
-  9a:	89 b7       	in	r24, 0x39	; 57
-  9c:	80 61       	ori	r24, 0x10	; 16
-  9e:	89 bf       	out	0x39, r24	; 57
+  b4:	89 b7       	in	r24, 0x39	; 57
+  b6:	80 61       	ori	r24, 0x10	; 16
+  b8:	89 bf       	out	0x39, r24	; 57
   OCR1A = 15624;                // Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
-  a0:	88 e0       	ldi	r24, 0x08	; 8
-  a2:	9d e3       	ldi	r25, 0x3D	; 61
-  a4:	9b bd       	out	0x2b, r25	; 43
-  a6:	8a bd       	out	0x2a, r24	; 42
+  ba:	88 e0       	ldi	r24, 0x08	; 8
+  bc:	9d e3       	ldi	r25, 0x3D	; 61
+  be:	9b bd       	out	0x2b, r25	; 43
+  c0:	8a bd       	out	0x2a, r24	; 42
   TCCR1B |= ((1 << CS10) | (1 << CS11));  // Start timer at Fcpu/64
-  a8:	8e b5       	in	r24, 0x2e	; 46
-  aa:	83 60       	ori	r24, 0x03	; 3
-  ac:	8e bd       	out	0x2e, r24	; 46
+  c2:	8e b5       	in	r24, 0x2e	; 46
+  c4:	83 60       	ori	r24, 0x03	; 3
+  c6:	8e bd       	out	0x2e, r24	; 46
 
   //READ FROM EEPROM
   valueRead = eeprom_read_byte((uint8_t*)EEPROM_STORAGE_ADDRESS);//read eeprom
-  ae:	88 e0       	ldi	r24, 0x08	; 8
-  b0:	90 e0       	ldi	r25, 0x00	; 0
-  b2:	59 d0       	rcall	.+178    	; 0x166 <eeprom_read_byte>
-  b4:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
+  c8:	88 e0       	ldi	r24, 0x08	; 8
+  ca:	90 e0       	ldi	r25, 0x00	; 0
+  cc:	73 d0       	rcall	.+230    	; 0x1b4 <eeprom_read_byte>
+  ce:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
   if (valueRead == 0xFFFF)//initial value.. omit it 
   {
-    gearState = 0;
+    gearCount = 0;
   }else{//has some value and its larger 
-    gearState = valueRead;
-  b8:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearState>
+    gearCount = valueRead;
+  d2:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearCount>
   }
+
   sei();//Enable Global Interrupts
-  bc:	78 94       	sei
+  d6:	78 94       	sei
+      gearCount --;
+      if(gearCount < 0){
+        gearCount = 0;
+      }
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+      dwnState = 1;
+  d8:	c1 e0       	ldi	r28, 0x01	; 1
+
+  sei();//Enable Global Interrupts
 
   while (1)//main loop 
   {
     if (secondFlag){
-  be:	80 91 73 00 	lds	r24, 0x0073	; 0x800073 <secondFlag>
-  c2:	88 23       	and	r24, r24
-  c4:	89 f0       	breq	.+34     	; 0xe8 <main+0x6c>
+  da:	80 91 75 00 	lds	r24, 0x0075	; 0x800075 <secondFlag>
+  de:	88 23       	and	r24, r24
+  e0:	31 f0       	breq	.+12     	; 0xee <main+0x58>
       secondFlag = 0;
-  c6:	10 92 73 00 	sts	0x0073, r1	; 0x800073 <secondFlag>
-      // gearState ++;
-      // if(gearState > 15){
-      //   gearState = 0;
-      // }
-      PORTB &= 0b10000000;
-  ca:	88 b3       	in	r24, 0x18	; 24
-  cc:	80 78       	andi	r24, 0x80	; 128
-  ce:	88 bb       	out	0x18, r24	; 24
-      PORTB |= states_of_segment[gearState];
-  d0:	98 b3       	in	r25, 0x18	; 24
-  d2:	e0 91 72 00 	lds	r30, 0x0072	; 0x800072 <gearState>
-  d6:	f0 e0       	ldi	r31, 0x00	; 0
-  d8:	e0 5a       	subi	r30, 0xA0	; 160
-  da:	ff 4f       	sbci	r31, 0xFF	; 255
-  dc:	80 81       	ld	r24, Z
-  de:	89 2b       	or	r24, r25
-  e0:	88 bb       	out	0x18, r24	; 24
+  e2:	10 92 75 00 	sts	0x0075, r1	; 0x800075 <secondFlag>
+      update_display();
+  e6:	ca df       	rcall	.-108    	; 0x7c <update_display>
       PORTB ^= (1 << SEGMENT_DOT);    // toggles the led
-  e2:	88 b3       	in	r24, 0x18	; 24
-  e4:	80 58       	subi	r24, 0x80	; 128
-  e6:	88 bb       	out	0x18, r24	; 24
+  e8:	88 b3       	in	r24, 0x18	; 24
+  ea:	80 58       	subi	r24, 0x80	; 128
+  ec:	88 bb       	out	0x18, r24	; 24
     }
 
     //hall effect sensor functionality
-    if (!(PIND & (1 << GEAR_SHIFT_UP))){  //if shift up detected
-  e8:	80 99       	sbic	0x10, 0	; 16
-  ea:	08 c0       	rjmp	.+16     	; 0xfc <main+0x80>
-      gearState ++;
-  ec:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearState>
-  f0:	8f 5f       	subi	r24, 0xFF	; 255
-      if(gearState > 15){
-  f2:	80 31       	cpi	r24, 0x10	; 16
-  f4:	40 f0       	brcs	.+16     	; 0x106 <main+0x8a>
-        gearState = 0;
-  f6:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearState>
-  fa:	07 c0       	rjmp	.+14     	; 0x10a <main+0x8e>
+    if ((PIND & (1 << GEAR_SHIFT_UP)) && upState == 1){//reset up debounce
+  ee:	80 9b       	sbis	0x10, 0	; 16
+  f0:	07 c0       	rjmp	.+14     	; 0x100 <main+0x6a>
+  f2:	80 91 74 00 	lds	r24, 0x0074	; 0x800074 <upState>
+  f6:	81 30       	cpi	r24, 0x01	; 1
+  f8:	19 f4       	brne	.+6      	; 0x100 <main+0x6a>
+      upState = 0;
+  fa:	10 92 74 00 	sts	0x0074, r1	; 0x800074 <upState>
+  fe:	46 c0       	rjmp	.+140    	; 0x18c <main+0xf6>
+    }else if ((PIND & (1 << GEAR_SHIFT_DOWN)) && dwnState == 1){ //reset down debounce
+ 100:	81 9b       	sbis	0x10, 1	; 16
+ 102:	07 c0       	rjmp	.+14     	; 0x112 <main+0x7c>
+ 104:	80 91 73 00 	lds	r24, 0x0073	; 0x800073 <dwnState>
+ 108:	81 30       	cpi	r24, 0x01	; 1
+ 10a:	19 f4       	brne	.+6      	; 0x112 <main+0x7c>
+      dwnState = 0;
+ 10c:	10 92 73 00 	sts	0x0073, r1	; 0x800073 <dwnState>
+ 110:	3d c0       	rjmp	.+122    	; 0x18c <main+0xf6>
+    } else if ((!(PIND & (1 << GEAR_SHIFT_UP))) && upState == 0){  //if shift up detected
+ 112:	80 99       	sbic	0x10, 0	; 16
+ 114:	12 c0       	rjmp	.+36     	; 0x13a <main+0xa4>
+ 116:	80 91 74 00 	lds	r24, 0x0074	; 0x800074 <upState>
+ 11a:	81 11       	cpse	r24, r1
+ 11c:	0e c0       	rjmp	.+28     	; 0x13a <main+0xa4>
+      gearCount ++;
+ 11e:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearCount>
+ 122:	8f 5f       	subi	r24, 0xFF	; 255
+      if(gearCount > 15){
+ 124:	80 31       	cpi	r24, 0x10	; 16
+ 126:	18 f4       	brcc	.+6      	; 0x12e <main+0x98>
+    if ((PIND & (1 << GEAR_SHIFT_UP)) && upState == 1){//reset up debounce
+      upState = 0;
+    }else if ((PIND & (1 << GEAR_SHIFT_DOWN)) && dwnState == 1){ //reset down debounce
+      dwnState = 0;
+    } else if ((!(PIND & (1 << GEAR_SHIFT_UP))) && upState == 0){  //if shift up detected
+      gearCount ++;
+ 128:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearCount>
+ 12c:	02 c0       	rjmp	.+4      	; 0x132 <main+0x9c>
+      if(gearCount > 15){
+        gearCount = 0;
+ 12e:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearCount>
       }
       PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
-    }else if (!(PIND & (1 << GEAR_SHIFT_DOWN))){  //if shift down detected
-  fc:	81 99       	sbic	0x10, 1	; 16
-  fe:	07 c0       	rjmp	.+14     	; 0x10e <main+0x92>
-      gearState --;
- 100:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearState>
- 104:	81 50       	subi	r24, 0x01	; 1
- 106:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearState>
-      if(gearState < 0){
-        gearState = 0;
+ 132:	c7 9a       	sbi	0x18, 7	; 24
+      upState = 1;
+ 134:	c0 93 74 00 	sts	0x0074, r28	; 0x800074 <upState>
+ 138:	0e c0       	rjmp	.+28     	; 0x156 <main+0xc0>
+      update_display();
+    }else if ((!(PIND & (1 << GEAR_SHIFT_DOWN))) && dwnState == 0){  //if shift down detected
+ 13a:	81 99       	sbic	0x10, 1	; 16
+ 13c:	0e c0       	rjmp	.+28     	; 0x15a <main+0xc4>
+ 13e:	80 91 73 00 	lds	r24, 0x0073	; 0x800073 <dwnState>
+ 142:	81 11       	cpse	r24, r1
+ 144:	0a c0       	rjmp	.+20     	; 0x15a <main+0xc4>
+      gearCount --;
+ 146:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearCount>
+ 14a:	81 50       	subi	r24, 0x01	; 1
+ 14c:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearCount>
+      if(gearCount < 0){
+        gearCount = 0;
       }
       PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
- 10a:	c7 9a       	sbi	0x18, 7	; 24
- 10c:	19 c0       	rjmp	.+50     	; 0x140 <main+0xc4>
+ 150:	c7 9a       	sbi	0x18, 7	; 24
+      dwnState = 1;
+ 152:	c0 93 73 00 	sts	0x0073, r28	; 0x800073 <dwnState>
+      update_display();
+ 156:	92 df       	rcall	.-220    	; 0x7c <update_display>
+ 158:	19 c0       	rjmp	.+50     	; 0x18c <main+0xf6>
     }else if (!(PIND & (1 << RESET_ALL))){  //if reset button pressed
- 10e:	82 99       	sbic	0x10, 2	; 16
- 110:	17 c0       	rjmp	.+46     	; 0x140 <main+0xc4>
+ 15a:	82 99       	sbic	0x10, 2	; 16
+ 15c:	17 c0       	rjmp	.+46     	; 0x18c <main+0xf6>
       //reset the gear state stored in eeprom if it has any previous value
       cli();//Disable Global Interrupts
- 112:	f8 94       	cli
+ 15e:	f8 94       	cli
       valueRead = eeprom_read_byte((uint8_t*)EEPROM_STORAGE_ADDRESS);//read eeprom
- 114:	88 e0       	ldi	r24, 0x08	; 8
- 116:	90 e0       	ldi	r25, 0x00	; 0
- 118:	26 d0       	rcall	.+76     	; 0x166 <eeprom_read_byte>
- 11a:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
+ 160:	88 e0       	ldi	r24, 0x08	; 8
+ 162:	90 e0       	ldi	r25, 0x00	; 0
+ 164:	27 d0       	rcall	.+78     	; 0x1b4 <eeprom_read_byte>
+ 166:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
       eeprom_write_byte((uint8_t*)EEPROM_STORAGE_ADDRESS,0);//write eeprom
- 11e:	60 e0       	ldi	r22, 0x00	; 0
- 120:	88 e0       	ldi	r24, 0x08	; 8
- 122:	90 e0       	ldi	r25, 0x00	; 0
- 124:	28 d0       	rcall	.+80     	; 0x176 <eeprom_write_byte>
-      gearState = 0;
- 126:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearState>
+ 16a:	60 e0       	ldi	r22, 0x00	; 0
+ 16c:	88 e0       	ldi	r24, 0x08	; 8
+ 16e:	90 e0       	ldi	r25, 0x00	; 0
+ 170:	29 d0       	rcall	.+82     	; 0x1c4 <eeprom_write_byte>
+      gearCount = 0;
+ 172:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearCount>
       PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
- 12a:	c7 9a       	sbi	0x18, 7	; 24
+ 176:	c7 9a       	sbi	0x18, 7	; 24
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 12c:	2f e3       	ldi	r18, 0x3F	; 63
- 12e:	8d e0       	ldi	r24, 0x0D	; 13
- 130:	93 e0       	ldi	r25, 0x03	; 3
- 132:	21 50       	subi	r18, 0x01	; 1
- 134:	80 40       	sbci	r24, 0x00	; 0
- 136:	90 40       	sbci	r25, 0x00	; 0
- 138:	e1 f7       	brne	.-8      	; 0x132 <main+0xb6>
- 13a:	00 c0       	rjmp	.+0      	; 0x13c <main+0xc0>
- 13c:	00 00       	nop
+ 178:	2f e3       	ldi	r18, 0x3F	; 63
+ 17a:	8d e0       	ldi	r24, 0x0D	; 13
+ 17c:	93 e0       	ldi	r25, 0x03	; 3
+ 17e:	21 50       	subi	r18, 0x01	; 1
+ 180:	80 40       	sbci	r24, 0x00	; 0
+ 182:	90 40       	sbci	r25, 0x00	; 0
+ 184:	e1 f7       	brne	.-8      	; 0x17e <main+0xe8>
+ 186:	00 c0       	rjmp	.+0      	; 0x188 <main+0xf2>
+ 188:	00 00       	nop
       _delay_ms(1000);
       sei();//Enable Global Interrupts
- 13e:	78 94       	sei
+ 18a:	78 94       	sei
     }
 
     //-------------------------------POWER DOWN, SAVE IMMEDIATELY TO EEPROM
     if (!(PIND & (1 << POWER_OFF_DETECT))){ //active low
- 140:	84 99       	sbic	0x10, 4	; 16
- 142:	bd cf       	rjmp	.-134    	; 0xbe <main+0x42>
+ 18c:	84 99       	sbic	0x10, 4	; 16
+ 18e:	a5 cf       	rjmp	.-182    	; 0xda <main+0x44>
       cli();//Disable Global Interrupts
- 144:	f8 94       	cli
-      eeprom_write_byte((uint8_t*)EEPROM_STORAGE_ADDRESS, gearState);//write eeprom
- 146:	60 91 72 00 	lds	r22, 0x0072	; 0x800072 <gearState>
- 14a:	88 e0       	ldi	r24, 0x08	; 8
- 14c:	90 e0       	ldi	r25, 0x00	; 0
- 14e:	13 d0       	rcall	.+38     	; 0x176 <eeprom_write_byte>
-      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
- 150:	c7 9a       	sbi	0x18, 7	; 24
- 152:	2f e9       	ldi	r18, 0x9F	; 159
- 154:	86 e8       	ldi	r24, 0x86	; 134
- 156:	91 e0       	ldi	r25, 0x01	; 1
- 158:	21 50       	subi	r18, 0x01	; 1
- 15a:	80 40       	sbci	r24, 0x00	; 0
- 15c:	90 40       	sbci	r25, 0x00	; 0
- 15e:	e1 f7       	brne	.-8      	; 0x158 <main+0xdc>
- 160:	00 c0       	rjmp	.+0      	; 0x162 <main+0xe6>
- 162:	00 00       	nop
- 164:	ab cf       	rjmp	.-170    	; 0xbc <main+0x40>
-
-00000166 <eeprom_read_byte>:
- 166:	e1 99       	sbic	0x1c, 1	; 28
- 168:	fe cf       	rjmp	.-4      	; 0x166 <eeprom_read_byte>
- 16a:	9f bb       	out	0x1f, r25	; 31
- 16c:	8e bb       	out	0x1e, r24	; 30
- 16e:	e0 9a       	sbi	0x1c, 0	; 28
- 170:	99 27       	eor	r25, r25
- 172:	8d b3       	in	r24, 0x1d	; 29
- 174:	08 95       	ret
-
-00000176 <eeprom_write_byte>:
- 176:	26 2f       	mov	r18, r22
-
-00000178 <eeprom_write_r18>:
- 178:	e1 99       	sbic	0x1c, 1	; 28
- 17a:	fe cf       	rjmp	.-4      	; 0x178 <eeprom_write_r18>
- 17c:	9f bb       	out	0x1f, r25	; 31
- 17e:	8e bb       	out	0x1e, r24	; 30
- 180:	2d bb       	out	0x1d, r18	; 29
- 182:	0f b6       	in	r0, 0x3f	; 63
- 184:	f8 94       	cli
- 186:	e2 9a       	sbi	0x1c, 2	; 28
- 188:	e1 9a       	sbi	0x1c, 1	; 28
- 18a:	0f be       	out	0x3f, r0	; 63
- 18c:	01 96       	adiw	r24, 0x01	; 1
- 18e:	08 95       	ret
-
-00000190 <_exit>:
  190:	f8 94       	cli
+      eeprom_write_byte((uint8_t*)EEPROM_STORAGE_ADDRESS, gearCount);//write eeprom
+ 192:	60 91 72 00 	lds	r22, 0x0072	; 0x800072 <gearCount>
+ 196:	88 e0       	ldi	r24, 0x08	; 8
+ 198:	90 e0       	ldi	r25, 0x00	; 0
+ 19a:	14 d0       	rcall	.+40     	; 0x1c4 <eeprom_write_byte>
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+ 19c:	c7 9a       	sbi	0x18, 7	; 24
+ 19e:	2f e9       	ldi	r18, 0x9F	; 159
+ 1a0:	86 e8       	ldi	r24, 0x86	; 134
+ 1a2:	91 e0       	ldi	r25, 0x01	; 1
+ 1a4:	21 50       	subi	r18, 0x01	; 1
+ 1a6:	80 40       	sbci	r24, 0x00	; 0
+ 1a8:	90 40       	sbci	r25, 0x00	; 0
+ 1aa:	e1 f7       	brne	.-8      	; 0x1a4 <main+0x10e>
+ 1ac:	00 c0       	rjmp	.+0      	; 0x1ae <main+0x118>
+ 1ae:	00 00       	nop
+      _delay_ms(500); //delay till the capacitor discharge
+      sei();//Enable Global Interrupts
+ 1b0:	78 94       	sei
+ 1b2:	93 cf       	rjmp	.-218    	; 0xda <main+0x44>
 
-00000192 <__stop_program>:
- 192:	ff cf       	rjmp	.-2      	; 0x192 <__stop_program>
+000001b4 <eeprom_read_byte>:
+ 1b4:	e1 99       	sbic	0x1c, 1	; 28
+ 1b6:	fe cf       	rjmp	.-4      	; 0x1b4 <eeprom_read_byte>
+ 1b8:	9f bb       	out	0x1f, r25	; 31
+ 1ba:	8e bb       	out	0x1e, r24	; 30
+ 1bc:	e0 9a       	sbi	0x1c, 0	; 28
+ 1be:	99 27       	eor	r25, r25
+ 1c0:	8d b3       	in	r24, 0x1d	; 29
+ 1c2:	08 95       	ret
+
+000001c4 <eeprom_write_byte>:
+ 1c4:	26 2f       	mov	r18, r22
+
+000001c6 <eeprom_write_r18>:
+ 1c6:	e1 99       	sbic	0x1c, 1	; 28
+ 1c8:	fe cf       	rjmp	.-4      	; 0x1c6 <eeprom_write_r18>
+ 1ca:	9f bb       	out	0x1f, r25	; 31
+ 1cc:	8e bb       	out	0x1e, r24	; 30
+ 1ce:	2d bb       	out	0x1d, r18	; 29
+ 1d0:	0f b6       	in	r0, 0x3f	; 63
+ 1d2:	f8 94       	cli
+ 1d4:	e2 9a       	sbi	0x1c, 2	; 28
+ 1d6:	e1 9a       	sbi	0x1c, 1	; 28
+ 1d8:	0f be       	out	0x3f, r0	; 63
+ 1da:	01 96       	adiw	r24, 0x01	; 1
+ 1dc:	08 95       	ret
+
+000001de <_exit>:
+ 1de:	f8 94       	cli
+
+000001e0 <__stop_program>:
+ 1e0:	ff cf       	rjmp	.-2      	; 0x1e0 <__stop_program>
