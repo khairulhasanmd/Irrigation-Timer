@@ -1,0 +1,330 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000194  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000010  00800060  00000194  00000228  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000004  00800070  00800070  00000238  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000238  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000268  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000028  00000000  00000000  000002a4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   000006e8  00000000  00000000  000002cc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000586  00000000  00000000  000009b4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000001b9  00000000  00000000  00000f3a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000048  00000000  00000000  000010f4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    00000331  00000000  00000000  0000113c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000000cc  00000000  00000000  0000146d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000018  00000000  00000000  00001539  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	2c c0       	rjmp	.+88     	; 0x5c <__bad_interrupt>
+   4:	2b c0       	rjmp	.+86     	; 0x5c <__bad_interrupt>
+   6:	2a c0       	rjmp	.+84     	; 0x5c <__bad_interrupt>
+   8:	29 c0       	rjmp	.+82     	; 0x5c <__bad_interrupt>
+   a:	28 c0       	rjmp	.+80     	; 0x5c <__bad_interrupt>
+   c:	28 c0       	rjmp	.+80     	; 0x5e <__vector_6>
+   e:	26 c0       	rjmp	.+76     	; 0x5c <__bad_interrupt>
+  10:	25 c0       	rjmp	.+74     	; 0x5c <__bad_interrupt>
+  12:	24 c0       	rjmp	.+72     	; 0x5c <__bad_interrupt>
+  14:	23 c0       	rjmp	.+70     	; 0x5c <__bad_interrupt>
+  16:	22 c0       	rjmp	.+68     	; 0x5c <__bad_interrupt>
+  18:	21 c0       	rjmp	.+66     	; 0x5c <__bad_interrupt>
+  1a:	20 c0       	rjmp	.+64     	; 0x5c <__bad_interrupt>
+  1c:	1f c0       	rjmp	.+62     	; 0x5c <__bad_interrupt>
+  1e:	1e c0       	rjmp	.+60     	; 0x5c <__bad_interrupt>
+  20:	1d c0       	rjmp	.+58     	; 0x5c <__bad_interrupt>
+  22:	1c c0       	rjmp	.+56     	; 0x5c <__bad_interrupt>
+  24:	1b c0       	rjmp	.+54     	; 0x5c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e4 e9       	ldi	r30, 0x94	; 148
+  3a:	f1 e0       	ldi	r31, 0x01	; 1
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a0 37       	cpi	r26, 0x70	; 112
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+
+00000048 <__do_clear_bss>:
+  48:	20 e0       	ldi	r18, 0x00	; 0
+  4a:	a0 e7       	ldi	r26, 0x70	; 112
+  4c:	b0 e0       	ldi	r27, 0x00	; 0
+  4e:	01 c0       	rjmp	.+2      	; 0x52 <.do_clear_bss_start>
+
+00000050 <.do_clear_bss_loop>:
+  50:	1d 92       	st	X+, r1
+
+00000052 <.do_clear_bss_start>:
+  52:	a4 37       	cpi	r26, 0x74	; 116
+  54:	b2 07       	cpc	r27, r18
+  56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
+  58:	11 d0       	rcall	.+34     	; 0x7c <main>
+  5a:	9a c0       	rjmp	.+308    	; 0x190 <_exit>
+
+0000005c <__bad_interrupt>:
+  5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
+
+0000005e <__vector_6>:
+uint8_t valueRead = 0;
+uint8_t buttonPressed = 0; 
+uint8_t states_of_segment[16] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71}; //abcdefg
+
+ISR(TIMER1_COMPA_vect)
+{
+  5e:	1f 92       	push	r1
+  60:	0f 92       	push	r0
+  62:	0f b6       	in	r0, 0x3f	; 63
+  64:	0f 92       	push	r0
+  66:	11 24       	eor	r1, r1
+  68:	8f 93       	push	r24
+  secondFlag = 1;
+  6a:	81 e0       	ldi	r24, 0x01	; 1
+  6c:	80 93 73 00 	sts	0x0073, r24	; 0x800073 <secondFlag>
+}
+  70:	8f 91       	pop	r24
+  72:	0f 90       	pop	r0
+  74:	0f be       	out	0x3f, r0	; 63
+  76:	0f 90       	pop	r0
+  78:	1f 90       	pop	r1
+  7a:	18 95       	reti
+
+0000007c <main>:
+
+int main (void)
+{
+  //initialize the I/O Ports
+  DDRC |= (1 << PC5)|(1 << PC4)|(1 << PC3)|(1 << PC2); //led in pc5,4,3,2,pins
+  7c:	84 b3       	in	r24, 0x14	; 20
+  7e:	8c 63       	ori	r24, 0x3C	; 60
+  80:	84 bb       	out	0x14, r24	; 20
+  DDRB |= (1 << PB0)|(1 << PB1)|(1 << PB2)|(1 << PB3)|(1 << PB4)|(1 << PB5)|(1 << PB6)|(1 << SEGMENT_DOT); //seven segment gfedcba.
+  82:	87 b3       	in	r24, 0x17	; 23
+  84:	8f ef       	ldi	r24, 0xFF	; 255
+  86:	87 bb       	out	0x17, r24	; 23
+  DDRD &= ~((1 << GEAR_SHIFT_UP)|(1 << GEAR_SHIFT_DOWN)|(1 << RESET_ALL)|(1 << POWER_OFF_DETECT));    // switch on pin (GEAR_SHIFT_UP)
+  88:	81 b3       	in	r24, 0x11	; 17
+  8a:	88 7e       	andi	r24, 0xE8	; 232
+  8c:	81 bb       	out	0x11, r24	; 17
+  PORTD |= (1 << GEAR_SHIFT_UP)|(1 << GEAR_SHIFT_DOWN)|(1 << RESET_ALL)|(1 << POWER_OFF_DETECT);    // enable pull-up resistor
+  8e:	82 b3       	in	r24, 0x12	; 18
+  90:	87 61       	ori	r24, 0x17	; 23
+  92:	82 bb       	out	0x12, r24	; 18
+
+  TCCR1B |= (1 << WGM12);           // Configure timer 1 for CTC mode
+  94:	8e b5       	in	r24, 0x2e	; 46
+  96:	88 60       	ori	r24, 0x08	; 8
+  98:	8e bd       	out	0x2e, r24	; 46
+  TIMSK |= (1 << OCIE1A);           // Enable CTC interrupt
+  9a:	89 b7       	in	r24, 0x39	; 57
+  9c:	80 61       	ori	r24, 0x10	; 16
+  9e:	89 bf       	out	0x39, r24	; 57
+  OCR1A = 15624;                // Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+  a0:	88 e0       	ldi	r24, 0x08	; 8
+  a2:	9d e3       	ldi	r25, 0x3D	; 61
+  a4:	9b bd       	out	0x2b, r25	; 43
+  a6:	8a bd       	out	0x2a, r24	; 42
+  TCCR1B |= ((1 << CS10) | (1 << CS11));  // Start timer at Fcpu/64
+  a8:	8e b5       	in	r24, 0x2e	; 46
+  aa:	83 60       	ori	r24, 0x03	; 3
+  ac:	8e bd       	out	0x2e, r24	; 46
+
+  //READ FROM EEPROM
+  valueRead = eeprom_read_byte((uint8_t*)EEPROM_STORAGE_ADDRESS);//read eeprom
+  ae:	88 e0       	ldi	r24, 0x08	; 8
+  b0:	90 e0       	ldi	r25, 0x00	; 0
+  b2:	59 d0       	rcall	.+178    	; 0x166 <eeprom_read_byte>
+  b4:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
+  if (valueRead == 0xFFFF)//initial value.. omit it 
+  {
+    gearState = 0;
+  }else{//has some value and its larger 
+    gearState = valueRead;
+  b8:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearState>
+  }
+  sei();//Enable Global Interrupts
+  bc:	78 94       	sei
+
+  while (1)//main loop 
+  {
+    if (secondFlag){
+  be:	80 91 73 00 	lds	r24, 0x0073	; 0x800073 <secondFlag>
+  c2:	88 23       	and	r24, r24
+  c4:	89 f0       	breq	.+34     	; 0xe8 <main+0x6c>
+      secondFlag = 0;
+  c6:	10 92 73 00 	sts	0x0073, r1	; 0x800073 <secondFlag>
+      // gearState ++;
+      // if(gearState > 15){
+      //   gearState = 0;
+      // }
+      PORTB &= 0b10000000;
+  ca:	88 b3       	in	r24, 0x18	; 24
+  cc:	80 78       	andi	r24, 0x80	; 128
+  ce:	88 bb       	out	0x18, r24	; 24
+      PORTB |= states_of_segment[gearState];
+  d0:	98 b3       	in	r25, 0x18	; 24
+  d2:	e0 91 72 00 	lds	r30, 0x0072	; 0x800072 <gearState>
+  d6:	f0 e0       	ldi	r31, 0x00	; 0
+  d8:	e0 5a       	subi	r30, 0xA0	; 160
+  da:	ff 4f       	sbci	r31, 0xFF	; 255
+  dc:	80 81       	ld	r24, Z
+  de:	89 2b       	or	r24, r25
+  e0:	88 bb       	out	0x18, r24	; 24
+      PORTB ^= (1 << SEGMENT_DOT);    // toggles the led
+  e2:	88 b3       	in	r24, 0x18	; 24
+  e4:	80 58       	subi	r24, 0x80	; 128
+  e6:	88 bb       	out	0x18, r24	; 24
+    }
+
+    //hall effect sensor functionality
+    if (!(PIND & (1 << GEAR_SHIFT_UP))){  //if shift up detected
+  e8:	80 99       	sbic	0x10, 0	; 16
+  ea:	08 c0       	rjmp	.+16     	; 0xfc <main+0x80>
+      gearState ++;
+  ec:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearState>
+  f0:	8f 5f       	subi	r24, 0xFF	; 255
+      if(gearState > 15){
+  f2:	80 31       	cpi	r24, 0x10	; 16
+  f4:	40 f0       	brcs	.+16     	; 0x106 <main+0x8a>
+        gearState = 0;
+  f6:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearState>
+  fa:	07 c0       	rjmp	.+14     	; 0x10a <main+0x8e>
+      }
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+    }else if (!(PIND & (1 << GEAR_SHIFT_DOWN))){  //if shift down detected
+  fc:	81 99       	sbic	0x10, 1	; 16
+  fe:	07 c0       	rjmp	.+14     	; 0x10e <main+0x92>
+      gearState --;
+ 100:	80 91 72 00 	lds	r24, 0x0072	; 0x800072 <gearState>
+ 104:	81 50       	subi	r24, 0x01	; 1
+ 106:	80 93 72 00 	sts	0x0072, r24	; 0x800072 <gearState>
+      if(gearState < 0){
+        gearState = 0;
+      }
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+ 10a:	c7 9a       	sbi	0x18, 7	; 24
+ 10c:	19 c0       	rjmp	.+50     	; 0x140 <main+0xc4>
+    }else if (!(PIND & (1 << RESET_ALL))){  //if reset button pressed
+ 10e:	82 99       	sbic	0x10, 2	; 16
+ 110:	17 c0       	rjmp	.+46     	; 0x140 <main+0xc4>
+      //reset the gear state stored in eeprom if it has any previous value
+      cli();//Disable Global Interrupts
+ 112:	f8 94       	cli
+      valueRead = eeprom_read_byte((uint8_t*)EEPROM_STORAGE_ADDRESS);//read eeprom
+ 114:	88 e0       	ldi	r24, 0x08	; 8
+ 116:	90 e0       	ldi	r25, 0x00	; 0
+ 118:	26 d0       	rcall	.+76     	; 0x166 <eeprom_read_byte>
+ 11a:	80 93 71 00 	sts	0x0071, r24	; 0x800071 <valueRead>
+      eeprom_write_byte((uint8_t*)EEPROM_STORAGE_ADDRESS,0);//write eeprom
+ 11e:	60 e0       	ldi	r22, 0x00	; 0
+ 120:	88 e0       	ldi	r24, 0x08	; 8
+ 122:	90 e0       	ldi	r25, 0x00	; 0
+ 124:	28 d0       	rcall	.+80     	; 0x176 <eeprom_write_byte>
+      gearState = 0;
+ 126:	10 92 72 00 	sts	0x0072, r1	; 0x800072 <gearState>
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+ 12a:	c7 9a       	sbi	0x18, 7	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 12c:	2f e3       	ldi	r18, 0x3F	; 63
+ 12e:	8d e0       	ldi	r24, 0x0D	; 13
+ 130:	93 e0       	ldi	r25, 0x03	; 3
+ 132:	21 50       	subi	r18, 0x01	; 1
+ 134:	80 40       	sbci	r24, 0x00	; 0
+ 136:	90 40       	sbci	r25, 0x00	; 0
+ 138:	e1 f7       	brne	.-8      	; 0x132 <main+0xb6>
+ 13a:	00 c0       	rjmp	.+0      	; 0x13c <main+0xc0>
+ 13c:	00 00       	nop
+      _delay_ms(1000);
+      sei();//Enable Global Interrupts
+ 13e:	78 94       	sei
+    }
+
+    //-------------------------------POWER DOWN, SAVE IMMEDIATELY TO EEPROM
+    if (!(PIND & (1 << POWER_OFF_DETECT))){ //active low
+ 140:	84 99       	sbic	0x10, 4	; 16
+ 142:	bd cf       	rjmp	.-134    	; 0xbe <main+0x42>
+      cli();//Disable Global Interrupts
+ 144:	f8 94       	cli
+      eeprom_write_byte((uint8_t*)EEPROM_STORAGE_ADDRESS, gearState);//write eeprom
+ 146:	60 91 72 00 	lds	r22, 0x0072	; 0x800072 <gearState>
+ 14a:	88 e0       	ldi	r24, 0x08	; 8
+ 14c:	90 e0       	ldi	r25, 0x00	; 0
+ 14e:	13 d0       	rcall	.+38     	; 0x176 <eeprom_write_byte>
+      PORTB |= (1 << SEGMENT_DOT);    // light up the dot marker
+ 150:	c7 9a       	sbi	0x18, 7	; 24
+ 152:	2f e9       	ldi	r18, 0x9F	; 159
+ 154:	86 e8       	ldi	r24, 0x86	; 134
+ 156:	91 e0       	ldi	r25, 0x01	; 1
+ 158:	21 50       	subi	r18, 0x01	; 1
+ 15a:	80 40       	sbci	r24, 0x00	; 0
+ 15c:	90 40       	sbci	r25, 0x00	; 0
+ 15e:	e1 f7       	brne	.-8      	; 0x158 <main+0xdc>
+ 160:	00 c0       	rjmp	.+0      	; 0x162 <main+0xe6>
+ 162:	00 00       	nop
+ 164:	ab cf       	rjmp	.-170    	; 0xbc <main+0x40>
+
+00000166 <eeprom_read_byte>:
+ 166:	e1 99       	sbic	0x1c, 1	; 28
+ 168:	fe cf       	rjmp	.-4      	; 0x166 <eeprom_read_byte>
+ 16a:	9f bb       	out	0x1f, r25	; 31
+ 16c:	8e bb       	out	0x1e, r24	; 30
+ 16e:	e0 9a       	sbi	0x1c, 0	; 28
+ 170:	99 27       	eor	r25, r25
+ 172:	8d b3       	in	r24, 0x1d	; 29
+ 174:	08 95       	ret
+
+00000176 <eeprom_write_byte>:
+ 176:	26 2f       	mov	r18, r22
+
+00000178 <eeprom_write_r18>:
+ 178:	e1 99       	sbic	0x1c, 1	; 28
+ 17a:	fe cf       	rjmp	.-4      	; 0x178 <eeprom_write_r18>
+ 17c:	9f bb       	out	0x1f, r25	; 31
+ 17e:	8e bb       	out	0x1e, r24	; 30
+ 180:	2d bb       	out	0x1d, r18	; 29
+ 182:	0f b6       	in	r0, 0x3f	; 63
+ 184:	f8 94       	cli
+ 186:	e2 9a       	sbi	0x1c, 2	; 28
+ 188:	e1 9a       	sbi	0x1c, 1	; 28
+ 18a:	0f be       	out	0x3f, r0	; 63
+ 18c:	01 96       	adiw	r24, 0x01	; 1
+ 18e:	08 95       	ret
+
+00000190 <_exit>:
+ 190:	f8 94       	cli
+
+00000192 <__stop_program>:
+ 192:	ff cf       	rjmp	.-2      	; 0x192 <__stop_program>
