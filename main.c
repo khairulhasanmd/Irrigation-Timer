@@ -21,11 +21,12 @@
 #define EEPROM_MINUTE_SET_ADDRESS 0x01
 #define EEPROM_HOUR_SET_ADDRESS 0x02
 
-#define SEGMENT_DOT PB7
+#define RELAY PD0
 #define POWER_OFF_DETECT PD1
 #define CLK PD2
 #define DAT PD3
 #define BTN PD4
+#define SEGMENT_DOT PB7
 //modes
 #define RUN 0
 #define SECOND_SET 1
@@ -33,7 +34,8 @@
 #define HOUR_SET 3
 
 volatile uint8_t secondFlag;
-uint8_t buttonPressed = 0, curHr = 0, curMin = 0, curSec = 0, STATE = 0; 
+uint8_t buttonPressed = 0; 
+int curHr = 0, curMin = 0, curSec = 0, STATE = 0; 
 uint8_t states_of_segment[16] = {~0x3F, ~0x06, ~0x5B, ~0x4F, ~0x66, ~0x6D, ~0x7D, ~0x07, ~0x7F, ~0x6F, ~0x77, ~0x7C, ~0x39, ~0x5E, ~0x79, ~0x71}; //abcdefg
 uint8_t segment[4] = {0,0,0,0};
 int MSB, LSB, encoded, sum;
@@ -225,26 +227,34 @@ int main (void)
     }
 
     if (STATE == RUN){
-      if (secondFlag){
+      if (secondFlag){  //turn on relay
         secondFlag = 0;
         // PORTB ^= (1 << SEGMENT_DOT);    // toggles the led
         if(curSec > 0 ){
           curSec--;
-        }else if(curMin > 0 && curSec == 0){
+          PORTB |= (1 << RELAY);
+        }else if(curMin > 0 && curSec == 0){ //turn on relay
+          PORTB |= (1 << RELAY);
           curSec = 59;
           curMin --;
-        }else if(curSec == 0 && curMin == 0){
-          //do anything
+        }else if(curSec == 0 && curMin == 0){ //Turn off relay
+          PORTB &= ~(1 << RELAY);
         }
       }
       update_display();
     } else if (STATE == SECOND_SET){
       if(encoderValue > 1){
         curSec++;
+        if (curSec > 99){
+          curSec = 0;
+        }
         encoderValue = 0;
         segmentBlink = 0;
       }else if(encoderValue < -1){
         curSec--;
+        if (curSec < 0){
+          curSec = 99;
+        }
         encoderValue = 0;
         segmentBlink = 0;
       }
@@ -252,18 +262,30 @@ int main (void)
     }else if (STATE == MINUTE_SET){
       if(encoderValue > 1){
         curMin++;
+        if (curMin > 99){
+          curMin = 0;
+        }
         encoderValue = 0;
       }else if(encoderValue < -1){
         curMin--;
+        if (curMin < 0){
+          curMin = 99;
+        }
         encoderValue = 0;
       }
       blink_display_first2digit();
     }else if (STATE == HOUR_SET){
       if(encoderValue > 1){
         curHr++;
+        if (curHr > 99){
+          curHr = 0;
+        }
         encoderValue = 0;
       }else if(encoderValue < -1){
         curHr--;
+        if (curHr < 0){
+          curHr = 99;
+        }
         encoderValue = 0;
       }
       blink_display_first2digit();//needs fix
