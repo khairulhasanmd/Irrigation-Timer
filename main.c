@@ -190,6 +190,7 @@ int main (void)
 {
   //initialize the I/O Ports
   DDRD &= ~((1 << CLK)|(1 << DAT)|(1 << BTN)|(1 << POWER_OFF_DETECT));    // switch on pin (GEAR_SHIFT_UP)
+  DDRD |= (1 << RELAY);    // switch on pin (GEAR_SHIFT_UP)
   PORTD |= (1 << CLK)|(1 << DAT)|(1 << BTN)|(1 << POWER_OFF_DETECT);    // enable pull-up resistor
   DDRC |= (1 << PC5)|(1 << PC4)|(1 << PC3)|(1 << PC2); //common anode
   DDRB |= (1 << PB0)|(1 << PB1)|(1 << PB2)|(1 << PB3)|(1 << PB4)|(1 << PB5)|(1 << PB6)|(1 << SEGMENT_DOT); //seven segment gbcdefa.
@@ -232,13 +233,13 @@ int main (void)
         // PORTB ^= (1 << SEGMENT_DOT);    // toggles the led
         if(curSec > 0 ){
           curSec--;
-          PORTB |= (1 << RELAY);
+          PORTD |= (1 << RELAY);
         }else if(curMin > 0 && curSec == 0){ //turn on relay
-          PORTB |= (1 << RELAY);
+          PORTD |= (1 << RELAY);
           curSec = 59;
           curMin --;
         }else if(curSec == 0 && curMin == 0){ //Turn off relay
-          PORTB &= ~(1 << RELAY);
+          PORTD &= ~(1 << RELAY);
         }
       }
       update_display();
