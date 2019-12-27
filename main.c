@@ -13,7 +13,7 @@
 #define F_CPU                             1000000UL
 #include <util/delay.h>
 
-#define SEGMENT_SCAN_DELAY                3
+#define SEGMENT_SCAN_DELAY                4
 #define SEGMENT_TOTAL_TIME                30
 #define SEGMENT_BLINK_DELAY               15
 
@@ -23,6 +23,7 @@
 #define DAT                               PD3
 #define BTN                               PD4
 #define START_BUTTON                      PD5
+#define STOP_BUTTON                       PD6
 
 #define EEPROM_SECOND_SET_ADDRESS         0x00
 #define EEPROM_MINUTE_SET_ADDRESS         0x01
@@ -66,7 +67,7 @@ int MSB = 0, LSB = 0, encoded = 0, sum = 0, lastEncoded = 0, encoderValue = 0, s
 
 void waitForRelease(void){
   while(!(PIND & (1 << BTN))){//button held down;
-      _delay_ms(10);
+    _delay_ms(10);
   }
 }
 
@@ -235,7 +236,7 @@ int main (void)
   //initialize the I/O Ports
   DDRD &= ~((1 << CLK)|(1 << DAT)|(1 << BTN)|(1 << POWER_OFF_DETECT)|(1 << START_BUTTON));    // input
   DDRD |= (1 << RELAY);    // load
-  PORTD |= (1 << CLK)|(1 << DAT)|(1 << BTN)|(1 << POWER_OFF_DETECT)|(1 << START_BUTTON);    // enable pull-up resistor
+  PORTD |= (1 << CLK)|(1 << DAT)|(1 << BTN)|(1 << POWER_OFF_DETECT)|(1 << START_BUTTON)|(1 << STOP_BUTTON);    // enable pull-up resistor
   DDRC |= (1 << PC5)|(1 << PC4)|(1 << PC3)|(1 << PC2)|(1 << PC1)|(1 << PC0); //common anode
   DDRB |= (1 << PB0)|(1 << PB1)|(1 << PB2)|(1 << PB3)|(1 << PB4)|(1 << PB5)|(1 << PB6)|(1 << PB7); //seven segment gbcdefa.
 
@@ -320,12 +321,20 @@ int main (void)
           curHr --;
         }else if(curHr == 0 && curMin == 0 && curSec == 0){ //Turn off relay
           PORTD &= ~(1 << RELAY);
+          STATE = STANDBY;
           if(powerState == POWER_WAS_GONE){
             powerState = POWER_WAS_NOT_GONE;
-            STATE = STANDBY;
             clear_loadshedding_remaining_time();
           }
         }
+      }
+      if (!(PIND & (1 << STOP_BUTTON))){
+        dotSegment = 0;
+        curSec = 0;
+        curMin = 0;
+        curHr = 0;
+        PORTD &= ~(1 << RELAY);
+        STATE = STANDBY;
       }
       update_display();
     } else if (STATE == STANDBY){
@@ -345,6 +354,7 @@ int main (void)
         curSec = savedSec;
         curMin = savedMin;
         curHr = savedHr;
+        dotSegment = (DISP_DOT_HOUR_ONE | DISP_DOT_MINUTE_ONE);
         STATE = RUN;
       }
       update_display();
@@ -408,7 +418,7 @@ int main (void)
         eeprom_write_byte((uint8_t*)EEPROM_TEMP_SECOND_SET_ADDRESS, curSec);//write eeprom
         eeprom_write_byte((uint8_t*)EEPROM_TEMP_MINUTE_SET_ADDRESS, curMin);//write eeprom
         eeprom_write_byte((uint8_t*)EEPROM_TEMP_HOUR_SET_ADDRESS, curHr);//write eeprom
-        _delay_ms(500); //delay till the capacitor discharge
+        _delay_ms(1000); //delay till the capacitor discharge
         sei();
       }
     }
