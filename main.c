@@ -10,12 +10,19 @@
 #include <avr/eeprom.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#define F_CPU 1000000UL
+#define F_CPU                             1000000UL
 #include <util/delay.h>
 
-#define SEGMENT_SCAN_DELAY 3
-#define SEGMENT_TOTAL_TIME 30
-#define SEGMENT_BLINK_DELAY 15
+#define SEGMENT_SCAN_DELAY                3
+#define SEGMENT_TOTAL_TIME                30
+#define SEGMENT_BLINK_DELAY               15
+
+#define RELAY                             PD0
+#define POWER_OFF_DETECT                  PD1
+#define CLK                               PD2
+#define DAT                               PD3
+#define BTN                               PD4
+#define START_BUTTON                      PD5
 
 #define EEPROM_SECOND_SET_ADDRESS         0x00
 #define EEPROM_MINUTE_SET_ADDRESS         0x01
@@ -24,30 +31,38 @@
 #define EEPROM_TEMP_MINUTE_SET_ADDRESS    0x04
 #define EEPROM_TEMP_HOUR_SET_ADDRESS      0x05
 
-#define RELAY PD0
-#define POWER_OFF_DETECT PD1
-#define CLK PD2
-#define DAT PD3
-#define BTN PD4
-#define START_BUTTON PD5
-//modes
-#define RUN         0
-#define HOUR_SET    1
-#define MINUTE_SET  2
-#define SECOND_SET  3
-#define STANDBY     4
+#define RUN                               0
+#define HOUR_SET                          1
+#define MINUTE_SET                        2
+#define SECOND_SET                        3
+#define STANDBY                           4
 
-#define POWER_WAS_NOT_GONE    0
-#define POWER_WAS_GONE        1
+#define POWER_WAS_NOT_GONE                0
+#define POWER_WAS_GONE                    1
+
+#define SECOND_ONE                        5
+#define SECOND_TEN                        4
+#define MINUTE_ONE                        3
+#define MINUTE_TEN                        2
+#define HOUR_ONE                          1
+#define HOUR_TEN                          0
+
+#define DISP_SECOND_ONE                   2
+#define DISP_SECOND_TEN                   3
+#define DISP_MINUTE_ONE                   4
+#define DISP_MINUTE_TEN                   5
+#define DISP_HOUR_ONE                     6
+#define DISP_HOUR_TEN                     7
+
+#define SEGMENT_DOT_PIN                   0X80
 
 volatile uint8_t secondFlag;
-uint8_t buttonPressed = 0, powerState = 0; 
+uint8_t buttonPressed = 0, powerState = 0, dotSegment = 0; 
 int curHr = 0, curMin = 0, curSec = 0, STATE = 0; 
 int savedHr = 0, savedMin = 0, savedSec = 0; 
-uint8_t states_of_segment[16] = {~0x3F, ~0x06, ~0x5B, ~0x4F, ~0x66, ~0x6D, ~0x7D, ~0x07, ~0x7F, ~0x6F, ~0x77, ~0x7C, ~0x39, ~0x5E, ~0x79, ~0x71}; //abcdefg
+const uint8_t states_of_segment[16] = {~0x3F, ~0x06, ~0x5B, ~0x4F, ~0x66, ~0x6D, ~0x7D, ~0x07, ~0x7F, ~0x6F, ~0x77, ~0x7C, ~0x39, ~0x5E, ~0x79, ~0x71}; //abcdefg
 uint8_t segment[6] = {0,0,0,0,0,0};
-int MSB, LSB, encoded, sum;
-int lastEncoded = 0, encoderValue = 0, segmentBlink = 0;
+int MSB = 0, LSB = 0, encoded = 0, sum = 0, lastEncoded = 0, encoderValue = 0, segmentBlink = 0;
 
 void waitForRelease(void){
   while(!(PIND & (1 << BTN))){//button held down;
@@ -71,7 +86,7 @@ void updateEncoder(void){
   lastEncoded = encoded; //store this value for next time 
 }
 
-void update_display(void){
+void calculate_segment_digits(void){
   // last 0088 segment
   segment[5] = curSec%10;
   segment[4] = curSec/10;
@@ -81,57 +96,65 @@ void update_display(void){
   //first 8800 segment
   segment[1] = curHr%10;
   segment[0] = curHr/10;
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[5]]);
-  PORTC |= 0b00100000; //common anode
+}
+
+void display_second_digits(void){
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[SECOND_TEN]]);
+  PORTC = 0b00010000; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << SECOND_TEN));
   _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[4]]);
-  PORTC |= 0b00010000; //common anode
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[SECOND_ONE]]);
+  PORTC = 0b00100000; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << SECOND_ONE));
   _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[3]]);
-  PORTC |= 0b00001000; //common anode
+}
+
+void display_minute_digits(void){
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[MINUTE_TEN]]);
+  PORTC = 0b00000100; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << MINUTE_TEN));
   _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[2]]);
-  PORTC |= 0b00000100; //common anode
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[MINUTE_ONE]]);
+  PORTC = 0b00001000; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << MINUTE_ONE));
   _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[1]]);
-  PORTC |= 0b00000010; //common anode
+}
+
+void display_hour_digits(void){
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[HOUR_TEN]]);
+  PORTC = 0b00000001; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << HOUR_TEN));
   _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[0]]);
-  PORTC |= 0b00000001; //common anode
+  PORTC = 0b00000000; //common anode
+  PORTB = (states_of_segment[segment[HOUR_ONE]]);
+  PORTC = 0b00000010; //common anode
+  PORTB &= ~(SEGMENT_DOT_PIN & (dotSegment << HOUR_ONE));
   _delay_ms(SEGMENT_SCAN_DELAY);
+}
+
+void update_display(void){
+  calculate_segment_digits();
+  display_hour_digits();
+  display_minute_digits();
+  display_second_digits();
 }
 
 void blink_display_second(void){
+  calculate_segment_digits();
+  dotSegment = ((1 << DISP_SECOND_TEN) | (1 << DISP_SECOND_ONE));
   segmentBlink ++;
   if(segmentBlink > SEGMENT_TOTAL_TIME){
     segmentBlink = 0;
   }
-  // last 0088 segment
-  segment[5] = curSec%10;
-  segment[4] = curSec/10;
+  display_hour_digits();
+  display_minute_digits();
   if (segmentBlink < SEGMENT_BLINK_DELAY){//on time
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[5]]);
-    PORTC |= 0b00100000; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[4]]);
-    PORTC |= 0b00010000; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
+    display_second_digits();
   }else if(segmentBlink > SEGMENT_BLINK_DELAY){//off time
     PORTB &= 0x80;
     PORTC &= 0b00000000; //common anode
@@ -140,58 +163,18 @@ void blink_display_second(void){
     PORTC &= 0b00000000; //common anode
     _delay_ms(SEGMENT_SCAN_DELAY);
   }
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[3]]);
-  PORTC |= 0b00001000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[2]]);
-  PORTC |= 0b00000100; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[1]]);
-  PORTC |= 0b00000010; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[0]]);
-  PORTC |= 0b00000001; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
 }
 
 void blink_display_minute(void){
+  calculate_segment_digits();
+  dotSegment = ((1 << DISP_MINUTE_TEN) | (1 << DISP_MINUTE_ONE));
   segmentBlink ++;
   if(segmentBlink > SEGMENT_TOTAL_TIME){
     segmentBlink = 0;
   }
-  //first 8800 segment
-  segment[3] = curMin%10;
-  segment[2] = curMin/10;
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[5]]);
-  PORTC |= 0b00100000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[4]]);
-  PORTC |= 0b00010000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
+  display_hour_digits();
   if (segmentBlink < SEGMENT_BLINK_DELAY){//on time
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[3]]);
-    PORTC |= 0b00001000; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[2]]);
-    PORTC |= 0b00000100; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
+    display_minute_digits();
   }else if(segmentBlink > SEGMENT_BLINK_DELAY){//off time
     PORTB &= 0x80;
     PORTC &= 0b00000000; //common anode
@@ -200,57 +183,18 @@ void blink_display_minute(void){
     PORTC &= 0b00000000; //common anode
     _delay_ms(SEGMENT_SCAN_DELAY);
   }
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[1]]);
-  PORTC |= 0b00000010; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[0]]);
-  PORTC |= 0b00000001; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
+  display_second_digits();
 }
 
 void blink_display_hour(void){
+  calculate_segment_digits();
+  dotSegment = ((1 << DISP_HOUR_TEN) | (1 << DISP_HOUR_ONE));
   segmentBlink ++;
   if(segmentBlink > SEGMENT_TOTAL_TIME){
     segmentBlink = 0;
   }
-  //first 880000 segment
-  segment[1] = curHr%10;
-  segment[0] = curHr/10;
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[5]]);
-  PORTC |= 0b00100000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[4]]);
-  PORTC |= 0b00010000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[3]]);
-  PORTC |= 0b00001000; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
-  PORTB &= 0x80;
-  PORTC &= 0b00000000; //common anode
-  PORTB |= (states_of_segment[segment[2]]);
-  PORTC |= 0b00000100; //common anode
-  _delay_ms(SEGMENT_SCAN_DELAY);
   if (segmentBlink < SEGMENT_BLINK_DELAY){//on time
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[1]]);
-    PORTC |= 0b00000010; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
-    PORTB &= 0x80;
-    PORTC &= 0b00000000; //common anode
-    PORTB |= (states_of_segment[segment[0]]);
-    PORTC |= 0b00000001; //common anode
-    _delay_ms(SEGMENT_SCAN_DELAY);
+    display_hour_digits();
   }else if(segmentBlink > SEGMENT_BLINK_DELAY){//off time
     PORTB &= 0x80;
     PORTC &= 0b00000000; //common anode
@@ -259,6 +203,16 @@ void blink_display_hour(void){
     PORTC &= 0b00000000; //common anode
     _delay_ms(SEGMENT_SCAN_DELAY);
   }
+  display_minute_digits();
+  display_second_digits();
+}
+
+void clear_loadshedding_remaining_time(void){
+  cli();//Disable Global Interrupts
+  eeprom_write_byte((uint8_t*)EEPROM_TEMP_SECOND_SET_ADDRESS, 0);//clear all lodshedding val
+  eeprom_write_byte((uint8_t*)EEPROM_TEMP_MINUTE_SET_ADDRESS, 0);//clear all lodshedding val
+  eeprom_write_byte((uint8_t*)EEPROM_TEMP_HOUR_SET_ADDRESS, 0);//clear all lodshedding val
+  sei();//Enable Global Interrupts
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -312,6 +266,8 @@ int main (void)
     powerState = POWER_WAS_NOT_GONE;
   }
 
+  dotSegment = 0xff;
+
   //interrupt
   MCUCR |= (1 << ISC00);    // set INT0 to trigger on ANY logic change
   GICR |= ((1 << INT0)|(1 << INT1));      // Turns on INT0 & int1
@@ -327,11 +283,7 @@ int main (void)
         curHr = savedHr;
         if(powerState == POWER_WAS_GONE){
           powerState = POWER_WAS_NOT_GONE;
-          cli();//Disable Global Interrupts
-          eeprom_write_byte((uint8_t*)EEPROM_TEMP_SECOND_SET_ADDRESS, 0);//clear all lodshedding val
-          eeprom_write_byte((uint8_t*)EEPROM_TEMP_MINUTE_SET_ADDRESS, 0);//clear all lodshedding val
-          eeprom_write_byte((uint8_t*)EEPROM_TEMP_HOUR_SET_ADDRESS, 0);//clear all lodshedding val
-          sei();//Enable Global Interrupts
+          clear_loadshedding_remaining_time();
         }
       }
       if (STATE == STANDBY){//set everything
@@ -370,11 +322,7 @@ int main (void)
           if(powerState == POWER_WAS_GONE){
             powerState = POWER_WAS_NOT_GONE;
             STATE = STANDBY;
-            cli();//Disable Global Interrupts
-            eeprom_write_byte((uint8_t*)EEPROM_TEMP_SECOND_SET_ADDRESS, 0);//clear eeprom
-            eeprom_write_byte((uint8_t*)EEPROM_TEMP_MINUTE_SET_ADDRESS, 0);//clear eeprom
-            eeprom_write_byte((uint8_t*)EEPROM_TEMP_HOUR_SET_ADDRESS, 0);//clear eeprom
-            sei();//Enable Global Interrupts
+            clear_loadshedding_remaining_time();
           }
         }
       }
