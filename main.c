@@ -300,6 +300,9 @@ int main (void)
       }
       if (STATE > STANDBY){
         STATE = HOUR_SET;
+        curSec = savedSec;
+        curMin = savedMin;
+        curHr = savedHr;
       }
       waitForRelease();
     }
