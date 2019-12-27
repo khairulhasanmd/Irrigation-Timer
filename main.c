@@ -13,7 +13,7 @@
 #define F_CPU                             1000000UL
 #include <util/delay.h>
 
-#define SEGMENT_SCAN_DELAY                4
+#define SEGMENT_SCAN_DELAY                3
 #define SEGMENT_TOTAL_TIME                30
 #define SEGMENT_BLINK_DELAY               15
 
