@@ -341,6 +341,7 @@ int main (void)
       }
       update_display();
     } else if (STATE == STANDBY){
+      PORTD &= ~(1 << RELAY);
       //no work to be done. just standby and check for start button press
       curSec = 0;
       curMin = 0;
@@ -362,6 +363,7 @@ int main (void)
       }
       update_display();
     } else if (STATE == SECOND_SET){
+      PORTD &= ~(1 << RELAY);
       if(encoderValue > 1){
         curSec++;
         if (curSec > 59){
@@ -379,6 +381,7 @@ int main (void)
       }
       blink_display_second();
     }else if (STATE == MINUTE_SET){
+      PORTD &= ~(1 << RELAY);
       if(encoderValue > 1){
         curMin++;
         if (curMin > 59){
@@ -396,6 +399,7 @@ int main (void)
       }
       blink_display_minute();
     }else if (STATE == HOUR_SET){
+      PORTD &= ~(1 << RELAY);
       if(encoderValue > 1){
         curHr++;
         if (curHr > 99){
